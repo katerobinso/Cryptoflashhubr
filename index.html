@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CryptoHub Flash Software</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #ecf0f1;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+    .hidden { display: none; }
+    h1 {
+      text-align: center;
+      color: #00cec9;
+      font-size: 2.8rem;
+      margin-bottom: 30px;
+      font-weight: 700;
+      animation: slideInDown 1s ease-out;
+    }
+    .section {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 25px;
+      margin-top: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      transition: 0.3s ease-in-out;
+    }
+    .section:hover {
+      transform: scale(1.01);
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    button {
+      padding: 12px 24px;
+      background: #0984e3;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #00cec9;
+    }
+    .balances {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      font-size: 18px;
+    }
+    .progress {
+      height: 20px;
+      background: #34495e;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: #00cec9;
+      transition: width 0.3s;
+    }
+    .history-entry {
+      margin: 8px 0;
+      padding: 10px;
+      background: #2d3436;
+      border-left: 4px solid #00cec9;
+      border-radius: 8px;
+    }
+    .fa-eye {
+      color: #ffffff;
+    }
+    input:focus, select:focus {
+      border-color: #00cec9;
+      box-shadow: 0 0 5px #00cec9;
+    }
+    @keyframes slideInDown {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💎 CryptoHub Flash Software</h1>
+    <div class="section" id="license-section">
+      <h3>🔑 Enter License Key</h3>
+      <div class="input-group">
+        <input type="password" id="licenseKey" placeholder="Enter license key to access" />
+      </div>
+      <button onclick="validateLicense()">Unlock Software</button>
+    </div>
+    <div id="mainApp" class="hidden">
+      <div class="section">
+        <h3>💸 Deposit USDT</h3>
+        <div class="input-group">
+          <select id="depositMethod">
+            <option value="">Select Deposit Method</option>
+            <option>Bank</option>
+            <option>Crypto</option>
+            <option>Skrill</option>
+            <option>Payoneer</option>
+            <option>PayPal</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <input type="number" id="depositAmount" placeholder="Enter amount to deposit" />
+        </div>
+        <button onclick="depositUSDT()">Deposit</button>
+      </div>
+      <div class="section">
+        <h3>📊 Balances <i class="fas fa-eye" onclick="toggleBalances()" style="cursor: pointer;"></i></h3>
+        <div class="balances">
+          <span>USDT Balance:</span>
+          <span id="usdtBalance">$34723.43</span>
+        </div>
+        <div class="balances">
+          <span>Flash USDT Balance:</span>
+          <span id="flashBalance">$0.00</span>
+        </div>
+      </div>
+      <div class="section">
+        <h3>⚡ Generate Flash USDT</h3>
+        <div class="input-group">
+          <input type="number" id="genAmount" placeholder="Enter USDT to use" />
+        </div>
+        <button onclick="generateFlash()">Generate</button>
+        <div class="progress">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <p id="progressPercent"></p>
+      </div>
+      <div class="section">
+        <h3>🚀 Send Flash USDT</h3>
+        <div class="input-group">
+          <input type="text" id="walletAddress" placeholder="Enter Wallet Address" />
+        </div>
+        <div class="input-group">
+          <select id="network">
+            <option value="">Select Network</option>
+            <option>TRC20</option>
+            <option>BEP20</option>
+            <option>ERC20</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <input type="number" id="sendAmount" placeholder="Amount to Send" />
+        </div>
+        <button onclick="sendFlash()">Send Flash</button>
+      </div>
+      <div class="section">
+        <h3>📂 Transaction History</h3>
+        <div id="transactionHistory"></div>
+      </div>
+      <div class="section">
+        <h3>📞 Contact Support</h3>
+        <p>If you need help or have questions, reach out to us on:</p>
+        <div style="display: flex; gap: 10px;">
+          <a href="https://wa.me/254703808496" target="_blank">
+            <button style="background: #25D366;"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+          </a>
+          <a href="https://t.me/Myupi254" target="_blank">
+            <button style="background: #0088cc;"><i class="fab fa-telegram-plane"></i> Telegram</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+  const correctLicenseKey = "free123free";
+  let usdtBalance = 34723.43;
+  let flashBalance = 0;
+
+  function validateLicense() {
+    const key = document.getElementById("licenseKey").value;
+    if (key === correctLicenseKey) {
+      document.getElementById("license-section").classList.add("hidden");
+      document.getElementById("mainApp").classList.remove("hidden");
+    } else {
+      alert("❌ Invalid license key. Try again.");
+    }
+  }
+
+  function toggleBalances() {
+    const usdt = document.getElementById("usdtBalance");
+    const flash = document.getElementById("flashBalance");
+    const hidden = usdt.style.visibility === "hidden";
+    usdt.style.visibility = hidden ? "visible" : "hidden";
+    flash.style.visibility = hidden ? "visible" : "hidden";
+  }
+
+  function depositUSDT() {
+    const amount = parseFloat(document.getElementById("depositAmount").value);
+    if (!isNaN(amount) && amount > 0) {
+      usdtBalance += amount;
+      updateBalances();
+      alert(`✅ Deposited $${amount.toFixed(2)} USDT successfully.`);
+    } else {
+      alert("❌ Please enter a valid amount.");
+    }
+  }
+
+  function updateBalances() {
+    document.getElementById("usdtBalance").textContent = `$${usdtBalance.toFixed(2)}`;
+    document.getElementById("flashBalance").textContent = `$${flashBalance.toFixed(2)}`;
+  }
+
+  function generateFlash() {
+    const amount = parseFloat(document.getElementById("genAmount").value);
+    if (!isNaN(amount) && amount > 0 && amount <= usdtBalance) {
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress++;
+        document.getElementById("progressBar").style.width = progress + "%";
+        document.getElementById("progressPercent").textContent = progress + "% generating...";
+        if (progress >= 100) {
+          clearInterval(interval);
+          const generated = amount * 100; // 20 USDT = 2000 Flash USDT
+          flashBalance += generated;
+          usdtBalance -= amount;
+          updateBalances();
+          document.getElementById("progressPercent").textContent = `✅ Generated $${generated.toFixed(2)} Flash USDT.`;
+        }
+      }, 180);
+    } else {
+      alert("❌ Invalid amount or insufficient balance.");
+    }
+  }
+
+  function sendFlash() {
+    const wallet = document.getElementById("walletAddress").value;
+    const network = document.getElementById("network").value;
+    const amount = parseFloat(document.getElementById("sendAmount").value);
+    if (wallet && network && !isNaN(amount) && amount > 0 && amount <= flashBalance) {
+      setTimeout(() => {
+        flashBalance -= amount;
+        updateBalances();
+        const history = document.getElementById("transactionHistory");
+        const entry = document.createElement("div");
+        entry.className = "history-entry";
+        entry.textContent = `Sent $${amount.toFixed(2)} Flash USDT to ${wallet} via ${network}`;
+        history.prepend(entry);
+        alert("✅ Transaction successful!");
+      }, 5000);
+    } else {
+      alert("❌ Fill all fields correctly or insufficient Flash USDT.");
+    }
+  }
+</script>
+</body>
+</html>
